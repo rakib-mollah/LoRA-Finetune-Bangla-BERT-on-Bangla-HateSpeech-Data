@@ -27,7 +27,7 @@ Run fine-tuning via `main.py` with command-line arguments. All experiments log t
 4. `%cd Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data`
 5. Install dependencies:
    ```
-   !pip install -q torch transformers scikit-learn pandas numpy tqdm mlflow
+   !pip install -q torch transformers scikit-learn pandas numpy tqdm mlflow peft
    ```
 
 
