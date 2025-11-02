@@ -1,6 +1,6 @@
 """
 Main script for Bangla BERT Hate Speech Detection
-Runs K-fold cross-validation training for binary classification
+Runs K-fold cross-validation training for binary classification with LoRA
 """
 
 from transformers import AutoTokenizer
@@ -9,7 +9,6 @@ from config import parse_arguments, print_config
 from data import load_and_preprocess_data, prepare_kfold_splits
 from train import run_kfold_training
 from utils import set_seed
-
 
 def main():
     # Parse arguments
@@ -29,9 +28,14 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"\nUsing device: {device}")
 
-    # Run K-fold training
-    run_kfold_training(config, comments, labels, tokenizer, device)
+    # Log LoRA-specific parameters to ensure they're being used
+    print(f"\nLoRA Parameters:")
+    print(f"  LoRA Rank (r): {config.lora_r}")
+    print(f"  LoRA Alpha (α): {config.lora_alpha}")
+    print(f"  LoRA Dropout: {config.lora_dropout}")
 
+    # Run K-fold training with LoRA integration
+    run_kfold_training(config, comments, labels, tokenizer, device)
 
 if __name__ == "__main__":
     main()
