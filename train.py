@@ -13,7 +13,7 @@ import mlflow
 import pandas as pd
 import time
 from data import HateSpeechDataset, calculate_class_weights, prepare_kfold_splits
-from model import TransformerBinaryClassifier
+from model import TransformerBinaryClassifierWithLoRA
 from utils import get_model_metrics, print_fold_summary, print_experiment_summary
 
 def cache_dataset(comments, labels, tokenizer, max_length, cache_file):
@@ -295,10 +295,26 @@ def run_kfold_training(config, comments, labels, tokenizer, device):
             val_loader = DataLoader(val_dataset, batch_size=config.batch, 
                                    shuffle=False, num_workers=2, pin_memory=True)
 
-            model = TransformerBinaryClassifier(config.model_path, dropout=config.dropout)
+            # Model Initialization with LoRA
+            model = TransformerBinaryClassifierWithLoRA(
+                model_name=config.model_path, 
+                dropout=config.dropout,
+                lora_r=config.lora_r,  # LoRA Rank
+                lora_alpha=config.lora_alpha,  # LoRA Alpha
+                lora_dropout=config.lora_dropout  # LoRA Dropout
+            )
+        
             if config.freeze_base:
-                model.freeze_base_layers()
+                model.freeze_base_layers()  # Freeze non-LoRA layers
+        
             model.to(device)
+        
+            # Log LoRA-specific params to MLflow
+            mlflow.log_params({
+                'lora_r': config.lora_r,
+                'lora_alpha': config.lora_alpha,
+                'lora_dropout': config.lora_dropout
+            })
 
             if fold == 0:
                 model_metrics = get_model_metrics(model)
