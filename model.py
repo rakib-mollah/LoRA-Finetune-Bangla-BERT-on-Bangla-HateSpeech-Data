@@ -16,11 +16,11 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
         config = AutoConfig.from_pretrained(model_name)
         hidden_size = config.hidden_size
 
-        # Define LoRA configuration
+        # Define LoRA configuration with explicit target_modules
         lora_config = LoraConfig(
             r=lora_r,
             lora_alpha=lora_alpha,
-            target_modules=None,
+            target_modules=["query", "value", "key"],  # FIX: Specify modules instead of None
             lora_dropout=lora_dropout,
             bias="none",
             task_type="SEQ_CLS",
@@ -40,16 +40,11 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
     def forward(self, input_ids, attention_mask=None, **kwargs):
         """
         Forward pass that explicitly ignores any extra kwargs like 'labels'
-        to prevent PEFT from passing them to the base BertModel
         """
-        outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
+        outputs = self.encoder(input_ids, attention_mask=attention_mask)
         cls_output = outputs.last_hidden_state[:, 0, :]
         logits = self.classifier(cls_output)
         return {'logits': logits}
-    
-
-
-
 
     def freeze_base_layers(self):
         """
