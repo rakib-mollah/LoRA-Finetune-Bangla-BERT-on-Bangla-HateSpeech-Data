@@ -118,7 +118,7 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
         optimizer.zero_grad()
         
         with autocast():
-            # Correct the model call: Don't pass labels to the encoder
+            # Call the model without passing 'labels'
             outputs = model(input_ids, attention_mask=attention_mask)  # Correct: No 'labels' here
             logits = outputs['logits']  # Extract logits from the model output
 
@@ -144,6 +144,8 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
 
 
 
+
+
 def evaluate_model(model, dataloader, device, class_weights=None):
     model.eval()
     total_loss = 0
@@ -162,8 +164,10 @@ def evaluate_model(model, dataloader, device, class_weights=None):
             labels = batch['labels'].to(device).view(-1, 1)
 
             with autocast():
-                outputs = model(input_ids, attention_mask=attention_mask)  # No 'labels' here
+                # Ensure no 'labels' are passed during the forward pass
+                outputs = model(input_ids, attention_mask=attention_mask)  # Correct: No 'labels' here
                 loss = loss_fct(outputs['logits'], labels)
+
             total_loss += loss.item()
 
             predictions = torch.sigmoid(outputs['logits'])
@@ -174,7 +178,6 @@ def evaluate_model(model, dataloader, device, class_weights=None):
     metrics = calculate_metrics(np.array(all_labels), np.array(all_predictions))
     metrics['loss'] = avg_loss
     return metrics
-
 
 
 
