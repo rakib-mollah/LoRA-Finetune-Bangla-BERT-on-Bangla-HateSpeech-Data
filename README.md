@@ -35,7 +35,7 @@ Run fine-tuning via `main.py` with command-line arguments. All experiments log t
    ```
 7. Install dependencies:
    ```
-   !pip install -q torch transformers scikit-learn pandas numpy tqdm mlflow
+   !pip install -q torch transformers scikit-learn pandas numpy tqdm mlflow peft
    ```
 
    
