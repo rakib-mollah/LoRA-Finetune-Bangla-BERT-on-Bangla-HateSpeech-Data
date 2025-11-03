@@ -29,9 +29,11 @@ Run fine-tuning via `main.py` with command-line arguments. All experiments log t
 3. Clone repo: `!git clone https://github.com/AnnNaserNabil/Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data`
 4. `%cd Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data`
 5. Install dependencies:
+   ```
+   !pip install -q torch transformers scikit-learn pandas numpy tqdm mlflow
+   ```
 
-!pip install -q torch transformers scikit-learn pandas numpy tqdm mlflow peft
-
+   
 ### Running in [Kaggle](https://www.kaggle.com/)
 1. Open a new notebook
 2. Go to Settings -> Accelerator -> Choose GPU P100
@@ -43,7 +45,7 @@ Run fine-tuning via `main.py` with command-line arguments. All experiments log t
 (Get the dataset path from sidebar)
 
 7. Run command (replace with your values):
-
+```
 !python main.py
 --author_name "your_name"
 --dataset_path "path/to/your/HateSpeech.csv"
@@ -63,6 +65,7 @@ Run fine-tuning via `main.py` with command-line arguments. All experiments log t
 --lora_r 8
 --lora_alpha 16
 --lora_dropout 0.1
+```
 
 - Full arguments:
   - `--batch`: Batch size (e.g., 16, 32, 64).
@@ -89,7 +92,7 @@ Run fine-tuning via `main.py` with command-line arguments. All experiments log t
 8. After run: Zip and download MLflow logs:
 
 !zip -r mlruns_yourname_ModelName_batch_32_lr_2e-5_epochs_15_dropout_0.1.zip ./mlruns
-- Download `{mlruns_yourname}_ModelName_batch_32_lr_2e-5_epochs_15_dropout_0.1.zip` from Colab's files sidebar.
+- Download    ```{mlruns_yourname}_ModelName_batch_32_lr_2e-5_epochs_15_dropout_0.1.zip   ``` from Colab's files sidebar.
 
 
 ### Viewing Results Locally
