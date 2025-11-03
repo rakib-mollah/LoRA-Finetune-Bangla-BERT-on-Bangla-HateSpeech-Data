@@ -119,7 +119,7 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
         
         with autocast():
             # Correct the model call: Don't pass labels to the encoder
-            outputs = model(input_ids, attention_mask=attention_mask)  # No 'labels' here
+            outputs = model(input_ids, attention_mask=attention_mask)  # Correct: No 'labels' here
             logits = outputs['logits']  # Extract logits from the model output
 
             # Calculate the loss separately using the logits and labels
@@ -144,7 +144,6 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
 
 
 
-
 def evaluate_model(model, dataloader, device, class_weights=None):
     model.eval()
     total_loss = 0
@@ -163,7 +162,7 @@ def evaluate_model(model, dataloader, device, class_weights=None):
             labels = batch['labels'].to(device).view(-1, 1)
 
             with autocast():
-                outputs = model(input_ids, attention_mask=attention_mask, labels=None)
+                outputs = model(input_ids, attention_mask=attention_mask)  # No 'labels' here
                 loss = loss_fct(outputs['logits'], labels)
             total_loss += loss.item()
 
@@ -175,6 +174,11 @@ def evaluate_model(model, dataloader, device, class_weights=None):
     metrics = calculate_metrics(np.array(all_labels), np.array(all_predictions))
     metrics['loss'] = avg_loss
     return metrics
+
+
+
+
+
 
 
 def print_epoch_metrics(epoch, num_epochs, fold, num_folds, train_metrics, val_metrics, best_macro_f1, best_epoch):
