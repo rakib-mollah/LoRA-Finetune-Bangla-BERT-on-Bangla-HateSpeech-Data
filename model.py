@@ -39,7 +39,7 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
             bias="none",
             task_type="SEQ_CLS"  # Sequence classification task
         )
-        
+
         # Applying LoRA to the encoder model
         self.encoder = get_peft_model(self.encoder, lora_config)
 
@@ -69,7 +69,7 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
 
         loss = None
         if labels is not None:
-            labels = labels.view(-1, 1).float()  # Reshape and convert to float for BCE loss
+            labels = labels.view(-1, 1).float()
             loss_fct = nn.BCEWithLogitsLoss()
             loss = loss_fct(logits, labels)
 
@@ -82,11 +82,12 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
         for param in self.encoder.parameters():
             param.requires_grad = False
 
-        # Unfreeze LoRA-specific layers
-        for param in self.encoder.peft.parameters():
-            param.requires_grad = True
+        # Unfreeze LoRA-specific layers by checking parameter names containing 'lora'
+        for name, param in self.encoder.named_parameters():
+            if 'lora' in name:
+                param.requires_grad = True
 
-        frozen_params = sum(p.numel() for p in self.encoder.parameters())
+        frozen_params = sum(p.numel() for p in self.encoder.parameters() if not p.requires_grad)
         total_params = sum(p.numel() for p in self.parameters())
         print(f"Frozen {frozen_params:,} parameters out of {total_params:,} total parameters")
         print(f"Trainable parameters: {total_params - frozen_params:,}")
