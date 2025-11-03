@@ -98,6 +98,10 @@ def calculate_metrics(y_true, y_pred):
 
     return metrics
 
+
+
+
+
 def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=None, max_norm=1.0):
     model.train()
     total_loss = 0
@@ -118,12 +122,11 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
         optimizer.zero_grad()
         
         with autocast():
-            # Call the model without passing 'labels'
-            outputs = model(input_ids, attention_mask=attention_mask)  # Correct: No 'labels' here
-        logits = outputs['logits']  # Extract logits from the model output
-
-        # Calculate the loss separately using the logits and labels
-        loss = loss_fct(logits, labels)
+            # Call the model with named arguments only
+            outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+            logits = outputs['logits']  # Extract logits from the model output
+            # Calculate the loss separately using the logits and labels
+            loss = loss_fct(logits, labels)
 
         scaler.scale(loss).backward()
         scaler.unscale_(optimizer)
@@ -141,9 +144,6 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
     train_metrics = calculate_metrics(np.array(all_train_labels), np.array(all_train_predictions))
     train_metrics['loss'] = avg_loss
     return train_metrics
-
-
-
 
 
 def evaluate_model(model, dataloader, device, class_weights=None):
@@ -164,13 +164,13 @@ def evaluate_model(model, dataloader, device, class_weights=None):
             labels = batch['labels'].to(device).view(-1, 1)
 
             with autocast():
-                # Ensure no 'labels' are passed during the forward pass
-                outputs = model(input_ids, attention_mask=attention_mask)  # Correct: No 'labels' here
-            loss = loss_fct(outputs['logits'], labels)
+                # Call the model with named arguments only
+                outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+                logits = outputs['logits']
+                loss = loss_fct(logits, labels)
 
             total_loss += loss.item()
-
-            predictions = torch.sigmoid(outputs['logits'])
+            predictions = torch.sigmoid(logits)
             all_predictions.extend(predictions.detach().cpu().numpy())
             all_labels.extend(labels.detach().cpu().numpy())
 
