@@ -31,7 +31,7 @@ Run fine-tuning via `main.py` with command-line arguments. All experiments log t
    !git clone https://github.com/rakib-mollah/LoRA-Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data
    ```
 5. ```
-   %cd Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data
+   %cd LoRA-Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data
    ```
 7. Install dependencies:
    ```
