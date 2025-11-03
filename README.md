@@ -28,7 +28,7 @@ Run fine-tuning via `main.py` with command-line arguments. All experiments log t
 2. Enable GPU: Runtime > Change runtime type > T4 GPU.
 3. Clone repo:
    ```
-   !git clone https://github.com/AnnNaserNabil/Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data
+   !git clone https://github.com/rakib-mollah/LoRA-Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data
    ```
 5. ```
    %cd Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data
