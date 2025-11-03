@@ -117,9 +117,14 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
         labels = batch['labels'].to(device).view(-1, 1)
 
         optimizer.zero_grad()
+        
         with autocast():
+            # Here, do not pass labels to the model. It should only return logits
             outputs = model(input_ids, attention_mask=attention_mask, labels=None)
-            loss = loss_fct(outputs['logits'], labels)
+            logits = outputs['logits']  # Extract logits from the model output
+
+            # Calculate the loss separately using the logits and labels
+            loss = loss_fct(logits, labels)
 
         scaler.scale(loss).backward()
         scaler.unscale_(optimizer)
@@ -129,7 +134,7 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
         scheduler.step()
 
         total_loss += loss.item()
-        predictions = torch.sigmoid(outputs['logits'])
+        predictions = torch.sigmoid(logits)
         all_train_predictions.extend(predictions.detach().cpu().numpy())
         all_train_labels.extend(labels.detach().cpu().numpy())
 
@@ -137,6 +142,7 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
     train_metrics = calculate_metrics(np.array(all_train_labels), np.array(all_train_predictions))
     train_metrics['loss'] = avg_loss
     return train_metrics
+
 
 
 def evaluate_model(model, dataloader, device, class_weights=None):
