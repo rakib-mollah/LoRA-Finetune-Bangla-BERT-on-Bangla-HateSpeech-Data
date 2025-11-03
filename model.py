@@ -38,37 +38,23 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
         )
 
     def forward(self, input_ids, attention_mask=None, labels=None):
-        """
-        Forward pass for the model, computes logits and loss if labels are provided.
-
-        Args:
-            input_ids (torch.Tensor): Input token IDs.
-            attention_mask (torch.Tensor, optional): Attention mask to avoid attention to padding tokens.
-            labels (torch.Tensor, optional): True labels for loss computation.
-
-        Returns:
-            dict: Dictionary with 'loss' and 'logits'.
-        """
-        # Pass inputs through the encoder (BERT or any transformer)
+        # Pass only inputs supported by the base encoder.
         outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
         
-        # Take the output corresponding to the [CLS] token (first token) for classification
+        # Extract the output corresponding to the [CLS] token (first token) for classification
         cls_output = outputs.last_hidden_state[:, 0, :]
         
         # Pass through the classifier head to get logits
         logits = self.classifier(cls_output)
-
-        # Initialize loss to None
+    
         loss = None
-        
-        # If labels are provided, calculate loss
         if labels is not None:
             labels = labels.view(-1, 1).float()  # Ensure labels are in correct shape
             loss_fn = nn.BCEWithLogitsLoss()    # Binary cross-entropy loss
             loss = loss_fn(logits, labels)      # Calculate loss
-
-        # Return both loss (if available) and logits
+    
         return {'loss': loss, 'logits': logits}
+
 
     def freeze_base_layers(self):
         """
