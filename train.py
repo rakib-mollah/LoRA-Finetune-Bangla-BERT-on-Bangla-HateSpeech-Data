@@ -100,8 +100,6 @@ def calculate_metrics(y_true, y_pred):
 
 
 
-
-
 def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=None, max_norm=1.0):
     model.train()
     total_loss = 0
@@ -122,10 +120,9 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
         optimizer.zero_grad()
         
         with autocast():
-            # Call the model with named arguments only
-            outputs = model(input_ids=input_ids, attention_mask=attention_mask)
-            logits = outputs['logits']  # Extract logits from the model output
-            # Calculate the loss separately using the logits and labels
+            # IMPORTANT: Pass only input_ids and attention_mask, NOT as kwargs from batch
+            outputs = model.forward(input_ids, attention_mask)
+            logits = outputs['logits']
             loss = loss_fct(logits, labels)
 
         scaler.scale(loss).backward()
@@ -164,8 +161,8 @@ def evaluate_model(model, dataloader, device, class_weights=None):
             labels = batch['labels'].to(device).view(-1, 1)
 
             with autocast():
-                # Call the model with named arguments only
-                outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+                # IMPORTANT: Pass only input_ids and attention_mask, NOT as kwargs from batch
+                outputs = model.forward(input_ids, attention_mask)
                 logits = outputs['logits']
                 loss = loss_fct(logits, labels)
 
@@ -178,6 +175,7 @@ def evaluate_model(model, dataloader, device, class_weights=None):
     metrics = calculate_metrics(np.array(all_labels), np.array(all_predictions))
     metrics['loss'] = avg_loss
     return metrics
+
 
 
 
