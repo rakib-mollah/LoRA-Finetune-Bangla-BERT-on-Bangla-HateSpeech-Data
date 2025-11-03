@@ -37,17 +37,16 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
             nn.Linear(256, 1),
         )
 
-    def forward(self, input_ids, attention_mask=None):
-        # Pass only input_ids and attention_mask to the base encoder (BERT model)
+    def forward(self, input_ids, attention_mask=None, **kwargs):
+        """
+        Forward pass that explicitly ignores any extra kwargs like 'labels'
+        to prevent PEFT from passing them to the base BertModel
+        """
         outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
-    
-        # Extract the output corresponding to the [CLS] token (first token) for classification
         cls_output = outputs.last_hidden_state[:, 0, :]
-    
-        # Pass through the classifier head to get logits
         logits = self.classifier(cls_output)
-        
         return {'logits': logits}
+    
 
 
 
