@@ -120,10 +120,10 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
         with autocast():
             # Call the model without passing 'labels'
             outputs = model(input_ids, attention_mask=attention_mask)  # Correct: No 'labels' here
-            logits = outputs['logits']  # Extract logits from the model output
+        logits = outputs['logits']  # Extract logits from the model output
 
-            # Calculate the loss separately using the logits and labels
-            loss = loss_fct(logits, labels)
+        # Calculate the loss separately using the logits and labels
+        loss = loss_fct(logits, labels)
 
         scaler.scale(loss).backward()
         scaler.unscale_(optimizer)
@@ -166,7 +166,7 @@ def evaluate_model(model, dataloader, device, class_weights=None):
             with autocast():
                 # Ensure no 'labels' are passed during the forward pass
                 outputs = model(input_ids, attention_mask=attention_mask)  # Correct: No 'labels' here
-                loss = loss_fct(outputs['logits'], labels)
+            loss = loss_fct(outputs['logits'], labels)
 
             total_loss += loss.item()
 
