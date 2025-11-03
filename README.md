@@ -52,23 +52,23 @@ Run fine-tuning via `main.py` with command-line arguments. All experiments log t
 7. Run command (replace with your values):
 ```
 !python main.py
---author_name "your_name"
---dataset_path "path/to/your/HateSpeech.csv"
---batch 32
---lr 2e-5
---epochs 15
---model_path "sagorsarker/bangla-bert-base"
---stratification_type binary
---seed 42
---dropout 0.1
---weight_decay 0.01
---warmup_ratio 0.1
---gradient_clip_norm 1.0
---early_stopping_patience 5
---num_folds 5
---freeze_base
---lora_r 8
---lora_alpha 16
+--author_name "your_name" \
+--dataset_path "path/to/your/HateSpeech.csv" \
+--batch 32 \
+--lr 2e-5 \
+--epochs 15 \
+--model_path "sagorsarker/bangla-bert-base" \
+--stratification_type binary \
+--seed 42 \
+--dropout 0.1 \
+--weight_decay 0.01 \
+--warmup_ratio 0.1 \
+--gradient_clip_norm 1.0 \
+--early_stopping_patience 5 \
+--num_folds 5 \
+--freeze_base \
+--lora_r 8 \
+--lora_alpha 16 \
 --lora_dropout 0.1
 ```
 
