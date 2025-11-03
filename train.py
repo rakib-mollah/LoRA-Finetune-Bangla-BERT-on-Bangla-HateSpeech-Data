@@ -119,8 +119,8 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
         optimizer.zero_grad()
         
         with autocast():
-            # Here, do not pass labels to the model. It should only return logits
-            outputs = model(input_ids, attention_mask=attention_mask, labels=None)
+            # Corrected to avoid passing 'labels' to the model
+            outputs = model(input_ids, attention_mask=attention_mask)  # No 'labels' argument here
             logits = outputs['logits']  # Extract logits from the model output
 
             # Calculate the loss separately using the logits and labels
@@ -142,6 +142,7 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
     train_metrics = calculate_metrics(np.array(all_train_labels), np.array(all_train_predictions))
     train_metrics['loss'] = avg_loss
     return train_metrics
+
 
 
 
