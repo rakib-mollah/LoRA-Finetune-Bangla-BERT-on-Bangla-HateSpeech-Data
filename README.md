@@ -51,7 +51,7 @@ Run fine-tuning via `main.py` with command-line arguments. All experiments log t
 
 7. Run command (replace with your values):
 ```
-!python main.py
+!python main.py \
 --author_name "your_name" \
 --dataset_path "path/to/your/HateSpeech.csv" \
 --batch 32 \
