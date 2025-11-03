@@ -37,18 +37,19 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
         )
 
     def forward(self, input_ids, attention_mask=None, labels=None):
-        # Pass only accepted args to encoder; do not pass labels
+        # Pass only inputs supported by the base encoder.
         outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
         cls_output = outputs.last_hidden_state[:, 0, :]
         logits = self.classifier(cls_output)
-
+    
         loss = None
         if labels is not None:
             labels = labels.view(-1, 1).float()
             loss_fn = nn.BCEWithLogitsLoss()
             loss = loss_fn(logits, labels)
+    
+        return {'loss': loss, 'logits': logits}
 
-        return {"loss": loss, "logits": logits}
 
     def freeze_base_layers(self):
         for param in self.encoder.parameters():
