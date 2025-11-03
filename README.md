@@ -26,9 +26,14 @@ Run fine-tuning via `main.py` with command-line arguments. All experiments log t
 ### Running in Google Colab (Recommended for Free GPU)
 1. Open Colab: [colab.research.google.com](https://colab.research.google.com).
 2. Enable GPU: Runtime > Change runtime type > T4 GPU.
-3. Clone repo: `!git clone https://github.com/AnnNaserNabil/Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data`
-4. `%cd Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data`
-5. Install dependencies:
+3. Clone repo:
+   ```
+   !git clone https://github.com/AnnNaserNabil/Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data
+   ```
+5. ```
+   %cd Finetune-Bangla-BERT-on-Bangla-HateSpeech-Data
+   ```
+7. Install dependencies:
    ```
    !pip install -q torch transformers scikit-learn pandas numpy tqdm mlflow
    ```
