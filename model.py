@@ -2,10 +2,10 @@
 Generic Transformer-based Binary Classifier for Hate Speech Detection
 Supports any transformer model (BERT, RoBERTa, etc.) through AutoModel
 """
+
 import torch.nn as nn
 from transformers import AutoModel, AutoConfig
-from peft import LoraConfig, get_peft_model
-# NOT "LoRAConfig"
+from peft import LoraConfig, get_peft_model  # Correct import spelling
 
 
 class TransformerBinaryClassifierWithLoRA(nn.Module):
@@ -31,10 +31,13 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
         hidden_size = config.hidden_size
 
         # Apply LoRA on the encoder (transformer layers)
-        lora_config = LoRAConfig(
+        lora_config = LoraConfig(
             r=lora_r,
-            alpha=lora_alpha,
-            dropout=lora_dropout
+            lora_alpha=lora_alpha,
+            target_modules=None,  # Optional: Specify layer names to apply LoRA (None applies to default)
+            dropout=lora_dropout,
+            bias="none",
+            task_type="SEQ_CLS"  # Sequence classification task
         )
         
         # Applying LoRA to the encoder model
@@ -66,7 +69,7 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
 
         loss = None
         if labels is not None:
-            labels = labels.view(-1, 1)  # Reshape to (batch_size, 1)
+            labels = labels.view(-1, 1).float()  # Reshape and convert to float for BCE loss
             loss_fct = nn.BCEWithLogitsLoss()
             loss = loss_fct(logits, labels)
 
