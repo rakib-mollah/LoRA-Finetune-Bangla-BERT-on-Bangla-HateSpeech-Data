@@ -37,7 +37,7 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
             nn.Linear(256, 1),
         )
 
-    def forward(self, input_ids, attention_mask=None, labels=None):
+    def forward(self, input_ids, attention_mask=None):
         # Pass only input_ids and attention_mask to the base encoder (BERT model)
         outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
     
@@ -47,13 +47,7 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
         # Pass through the classifier head to get logits
         logits = self.classifier(cls_output)
         
-        loss = None
-        if labels is not None:
-            labels = labels.view(-1, 1).float()  # Ensure labels are in correct shape
-            loss_fn = nn.BCEWithLogitsLoss()    # Binary cross-entropy loss
-            loss = loss_fn(logits, labels)      # Calculate loss
-        
-        return {'loss': loss, 'logits': logits}
+        return {'logits': logits}
 
 
 
