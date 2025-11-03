@@ -4,7 +4,8 @@ Supports any transformer model (BERT, RoBERTa, etc.) through AutoModel
 """
 import torch.nn as nn
 from transformers import AutoModel, AutoConfig
-from peft import LoRAConfig, get_peft_model
+from peft import LoraConfig, get_peft_model
+# NOT "LoRAConfig"
 
 
 class TransformerBinaryClassifierWithLoRA(nn.Module):
