@@ -22,7 +22,7 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
             dropout (float): Dropout rate for regularization
             lora_r (int): Rank for LoRA layers
             lora_alpha (int): Scaling factor for LoRA layers
-            lora_dropout (float): Dropout for LoRA layers
+            lora_dropout (float): Dropout rate for LoRA layers
         """
         super(TransformerBinaryClassifierWithLoRA, self).__init__()
         # Load pre-trained transformer model
@@ -34,8 +34,8 @@ class TransformerBinaryClassifierWithLoRA(nn.Module):
         lora_config = LoraConfig(
             r=lora_r,
             lora_alpha=lora_alpha,
-            target_modules=None,  # Optional: Specify layer names to apply LoRA (None applies to default)
-            dropout=lora_dropout,
+            target_modules=None,  # Optional: specify layers to apply LoRA adapters
+            lora_dropout=lora_dropout,
             bias="none",
             task_type="SEQ_CLS"  # Sequence classification task
         )
