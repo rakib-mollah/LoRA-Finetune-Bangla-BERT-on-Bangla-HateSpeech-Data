@@ -55,6 +55,13 @@ def parse_arguments():
                        help='Maximum norm for gradient clipping.')
     parser.add_argument('--early_stopping_patience', type=int, default=5,
                        help='Number of epochs without improvement before early stopping.')
+    parser.add_argument('--lora_r', type=int, default=8,
+                    help='LoRA rank (r).')
+    parser.add_argument('--lora_alpha', type=int, default=16,
+                        help='LoRA alpha scaling.')
+    parser.add_argument('--lora_dropout', type=float, default=0.1,
+                        help='LoRA dropout in adapter layers.')
+
 
     args = parser.parse_args()
 
