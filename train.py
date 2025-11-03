@@ -98,7 +98,6 @@ def calculate_metrics(y_true, y_pred):
 
     return metrics
 
-
 def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=None, max_norm=1.0):
     model.train()
     total_loss = 0
@@ -119,8 +118,8 @@ def train_epoch(model, dataloader, optimizer, scheduler, device, class_weights=N
         optimizer.zero_grad()
         
         with autocast():
-            # Corrected to avoid passing 'labels' to the model
-            outputs = model(input_ids, attention_mask=attention_mask)  # No 'labels' argument here
+            # Correct the model call: Don't pass labels to the encoder
+            outputs = model(input_ids, attention_mask=attention_mask)  # No 'labels' here
             logits = outputs['logits']  # Extract logits from the model output
 
             # Calculate the loss separately using the logits and labels
